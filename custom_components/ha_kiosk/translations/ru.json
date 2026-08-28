@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Подключение HA Kiosk",
-        "description": "Введите IP-адрес планшета, порт и ключ из настроек HA Kiosk.",
+        "title": "Подключение HA Kiosk Local",
+        "description": "Введите IP-адрес планшета, порт и ключ из настроек HA Kiosk Local.",
         "data": {
           "host": "IP-адрес планшета",
           "port": "Порт API",
@@ -12,11 +12,11 @@
       }
     },
     "error": {
-      "cannot_connect": "Не удалось подключиться к HA Kiosk. Проверьте IP, порт и сеть.",
+      "cannot_connect": "Не удалось подключиться к HA Kiosk Local. Проверьте IP, порт и сеть.",
       "invalid_auth": "Неверный ключ API."
     },
     "abort": {
-      "already_configured": "Этот планшет HA Kiosk уже добавлен."
+      "already_configured": "Этот планшет HA Kiosk Local уже добавлен."
     }
   }
 }
