@@ -1,4 +1,4 @@
-"""Data coordinator for HA Kiosk."""
+"""Data coordinator for HA Kiosk Local."""
 
 from __future__ import annotations
 
@@ -31,4 +31,4 @@ class HAKioskCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         try:
             return await self.client.async_status()
         except HAKioskApiError as err:
-            raise UpdateFailed(f"HA Kiosk API error: {err}") from err
+            raise UpdateFailed(f"HA Kiosk Local API error: {err}") from err
