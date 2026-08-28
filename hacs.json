@@ -1,5 +1,5 @@
 {
-  "name": "HA Kiosk",
+  "name": "HA Kiosk Local",
   "render_readme": true,
   "homeassistant": "2026.8.0"
 }
