@@ -1,4 +1,4 @@
-"""Select entities for HA Kiosk."""
+"""Select entities for HA Kiosk Local."""
 from __future__ import annotations
 import asyncio
 from homeassistant.components.select import SelectEntity
