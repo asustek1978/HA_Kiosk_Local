@@ -1,4 +1,4 @@
-"""Local HTTP API client for HA Kiosk."""
+"""Local HTTP API client for HA Kiosk Local."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from aiohttp import ClientError, ClientResponseError, ClientSession
 
 
 class HAKioskApiError(Exception):
-    """Base HA Kiosk API error."""
+    """Base HA Kiosk Local API error."""
 
 
 class HAKioskAuthError(HAKioskApiError):
@@ -17,11 +17,11 @@ class HAKioskAuthError(HAKioskApiError):
 
 
 class HAKioskConnectionError(HAKioskApiError):
-    """Cannot connect to HA Kiosk."""
+    """Cannot connect to HA Kiosk Local."""
 
 
 class HAKioskApi:
-    """Client for one HA Kiosk tablet."""
+    """Client for one HA Kiosk Local tablet."""
 
     def __init__(self, session: ClientSession, host: str, port: int, api_key: str) -> None:
         self._session = session
@@ -139,4 +139,3 @@ class HAKioskApi:
                     return
         except (TimeoutError, ClientError):
             return
-
