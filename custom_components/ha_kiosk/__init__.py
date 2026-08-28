@@ -1,4 +1,4 @@
-"""HA Kiosk integration."""
+"""HA Kiosk Local integration."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from .coordinator import HAKioskCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up HA Kiosk from a config entry."""
+    """Set up HA Kiosk Local from a config entry."""
     client = HAKioskApi(
         async_get_clientsession(hass),
         entry.data[CONF_HOST],
