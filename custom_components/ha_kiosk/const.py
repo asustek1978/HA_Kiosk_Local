@@ -1,4 +1,4 @@
-"""Constants for HA Kiosk."""
+"""Constants for HA Kiosk Local."""
 
 from homeassistant.const import Platform
 
