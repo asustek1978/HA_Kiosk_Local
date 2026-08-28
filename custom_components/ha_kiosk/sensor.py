@@ -1,4 +1,4 @@
-"""Sensors for HA Kiosk."""
+"""Sensors for HA Kiosk Local."""
 
 from __future__ import annotations
 
@@ -48,14 +48,14 @@ SENSORS = (
     HAKioskSensorDescription(key="ip_address", name="IP-адрес", icon="mdi:ip-network"),
     HAKioskSensorDescription(key="current_url", name="Текущий URL", icon="mdi:web"),
     HAKioskSensorDescription(key="android_version", name="Android", icon="mdi:android"),
-    HAKioskSensorDescription(key="app_version", name="Версия HA Kiosk", icon="mdi:information-outline"),
+    HAKioskSensorDescription(key="app_version", name="Версия HA Kiosk Local", icon="mdi:information-outline"),
     HAKioskSensorDescription(key="uptime_seconds", name="Время работы планшета", icon="mdi:timer-outline", unit=UnitOfTime.SECONDS, device_class=SensorDeviceClass.DURATION, state_class=M),
 
     HAKioskSensorDescription(key="ram_total_mb", name="RAM всего", icon="mdi:memory", unit="MB", state_class=M, precision=0),
     HAKioskSensorDescription(key="ram_available_mb", name="RAM доступно", icon="mdi:memory", unit="MB", state_class=M, precision=0),
     HAKioskSensorDescription(key="ram_used_mb", name="RAM занято", icon="mdi:memory", unit="MB", state_class=M, precision=0),
     HAKioskSensorDescription(key="ram_used_percent", name="Использование RAM", icon="mdi:memory", unit=PERCENTAGE, state_class=M, precision=1),
-    HAKioskSensorDescription(key="app_memory_pss_mb", name="Память HA Kiosk", icon="mdi:application-braces", unit="MB", state_class=M, precision=1),
+    HAKioskSensorDescription(key="app_memory_pss_mb", name="Память HA Kiosk Local", icon="mdi:application-braces", unit="MB", state_class=M, precision=1),
     HAKioskSensorDescription(key="swap_total_mb", name="Swap / zRAM всего", icon="mdi:swap-horizontal", unit="MB", state_class=M, precision=0),
     HAKioskSensorDescription(key="swap_used_mb", name="Swap / zRAM занято", icon="mdi:swap-horizontal-bold", unit="MB", state_class=M, precision=0),
     HAKioskSensorDescription(key="swap_used_percent", name="Использование Swap / zRAM", icon="mdi:swap-horizontal", unit=PERCENTAGE, state_class=M, precision=1),
