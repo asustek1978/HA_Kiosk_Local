@@ -1,4 +1,4 @@
-"""Config flow for HA Kiosk."""
+"""Config flow for HA Kiosk Local."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from .const import CONF_API_KEY, DEFAULT_PORT, DOMAIN
 
 
 class HAKioskConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for HA Kiosk."""
+    """Handle a config flow for HA Kiosk Local."""
 
     VERSION = 1
 
@@ -40,7 +40,7 @@ class HAKioskConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(device_id)
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=str(status.get("device_name") or "HA Kiosk"),
+                    title=str(status.get("device_name") or "HA Kiosk Local"),
                     data={
                         CONF_HOST: host,
                         CONF_PORT: port,
