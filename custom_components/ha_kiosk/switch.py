@@ -1,4 +1,4 @@
-"""Switch entities for HA Kiosk."""
+"""Switch entities for HA Kiosk Local."""
 from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
