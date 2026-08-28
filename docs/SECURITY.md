@@ -1,27 +1,23 @@
-# Security
+# Безопасность HA Kiosk Local
 
-## Local API
+HA Kiosk Local предназначен прежде всего для доверенной локальной сети.
 
-HA Kiosk exposes a local HTTP API, normally on TCP port `2323`.
+## API
 
-Authentication is performed with the `X-HA-Kiosk-Key` header.
+Локальный API работает по HTTP и защищён индивидуальным API key. Не публикуйте порт API напрямую в Интернет.
 
-The current API is **HTTP, not HTTPS**, because it is intended for a trusted local network.
+## Рекомендации
 
-Recommendations:
+- планшет и Home Assistant — в доверенной LAN/VLAN;
+- DHCP reservation для планшета;
+- firewall должен разрешать доступ к API только нужным локальным узлам;
+- API key не публиковать в GitHub Issues, скриншотах и логах;
+- при компрометации ключа сменить его в приложении и обновить config entry Home Assistant.
 
-- do not expose port 2323 to the public Internet;
-- use a trusted LAN/VLAN between Home Assistant and the kiosk device;
-- keep the API key secret;
-- use DHCP reservation or another stable address for the tablet;
-- if untrusted clients share the LAN, isolate IoT/kiosk devices with firewall rules while allowing Home Assistant to reach the tablet.
+## Camera / Microphone
 
-## Camera and microphone
-
-Camera and microphone capture requires Android runtime permissions. Presence monitoring can keep low-resolution camera/microphone processing active in the background depending on configured features.
-
-Disable motion/sound/camera features that are not needed.
+Камера и микрофон требуют системных разрешений Android. WebRTC включается при запросе просмотра; монитор движения/звука может работать в foreground service, если соответствующие функции включены.
 
 ## Device Owner
 
-Device Owner is a privileged Android management role. Enable it only on a device intended to be managed as a kiosk/dedicated device. It enables actions such as full device reboot and can affect normal consumer-device behavior.
+Device Owner — привилегированный режим Android. Включайте его только на устройстве, которое действительно используется как kiosk/настенная панель и которым вы управляете.
