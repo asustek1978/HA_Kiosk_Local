@@ -1,85 +1,47 @@
-# Установка HA Kiosk
+# Установка HA Kiosk Local
 
 ## Требования
 
-### Android
-
 - Android 10+ (API 29+)
-- Camera/Microphone permissions — только если нужны WebRTC, движение или звук
-- Wi-Fi/LAN с доступом к Home Assistant
-
-### Home Assistant
-
 - Home Assistant 2026.8+
-- HACS — необязательно, но упрощает установку интеграции
+- планшет и Home Assistant должны иметь сетевой доступ друг к другу
 
-## Установка Android APK
+## Android
 
-### Через Android
+После установки HA Kiosk Local:
 
-Откройте `HA_Kiosk.apk` и разрешите установку из выбранного источника.
+1. Откройте настройки удержанием **Громкость −**.
+2. Укажите URL Home Assistant.
+3. Авторизуйтесь в HA внутри WebView.
+4. Включите локальный API HA Kiosk Local.
+5. Запишите IP, порт и API key.
+6. Для настенного режима назначьте HA Kiosk Local приложением Home/Launcher.
+7. Разрешите Camera/Microphone, если нужны WebRTC, движение и звук.
+8. Для физического выключения экрана разрешите Device Admin.
 
-Если HA Kiosk уже назначен Home/Launcher, откройте его настройки удержанием **Громкость −** и используйте раздел обслуживания планшета для установки APK или открытия системных настроек.
+Рекомендуется закрепить IP планшета в DHCP сервера/роутера.
 
-### Через ADB
+## Home Assistant через HACS
 
-Проверка подключения:
+Добавьте Custom repository:
 
-```cmd
-"%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" devices
+```text
+https://github.com/asustek1978/HA_Kiosk_Local
 ```
 
-Установка/обновление:
+Тип: **Integration**.
 
-```cmd
-"%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" install -r "HA_Kiosk.apk"
-```
-
-Если APK подписан другим ключом, Android не установит его поверх существующей версии. В этом случае сначала разберитесь с подписью — удаление приложения сотрёт его локальные настройки и WebView-сессию.
-
-## Первичная настройка приложения
-
-1. Запустите HA Kiosk.
-2. Откройте настройки удержанием **Громкость −**.
-3. Укажите URL Home Assistant, например `http://192.168.1.10:8123/dashboard/home`.
-4. Включите локальный API HA Kiosk.
-5. Оставьте порт `2323` или задайте другой свободный порт.
-6. Сохраните API key.
-7. Для настоящего kiosk-автозапуска можно назначить HA Kiosk приложением Home.
-8. Для полноценного выключения экрана разрешите Device Admin.
-9. Для удалённого reboot Android при необходимости настройте Device Owner отдельно.
-
-## Проверка API с Windows
-
-```powershell
-Invoke-RestMethod `
-  -Uri "http://IP_ПЛАНШЕТА:2323/api/status" `
-  -Headers @{"X-HA-Kiosk-Key"="ВАШ_API_KEY"}
-```
-
-Ожидается `ok : True` и телеметрия устройства.
-
-## HACS
-
-1. HACS → меню `⋮` → **Custom repositories**.
-2. URL: `https://github.com/asustek1978/HA_Kiosk`
-3. Category: **Integration**.
-4. Установить HA Kiosk.
-5. Полностью перезапустить Home Assistant.
-
-Затем:
-
-**Настройки → Устройства и службы → Добавить интеграцию → HA Kiosk**
+Установите HA Kiosk Local, полностью перезапустите Home Assistant и добавьте интеграцию через **Настройки → Устройства и службы**.
 
 Введите:
 
-- Host: IP планшета
-- Port: обычно `2323`
-- API key: из приложения HA Kiosk
+- IP Android-устройства;
+- порт (по умолчанию `2323`);
+- API key.
 
-## Ручная установка Home Assistant integration
+## Ручная установка
 
-Скопируйте папку:
+Скопируйте:
 
 ```text
 custom_components/ha_kiosk
@@ -91,11 +53,26 @@ custom_components/ha_kiosk
 /config/custom_components/ha_kiosk
 ```
 
-После копирования требуется полный restart Home Assistant.
+Затем полностью перезапустите Home Assistant.
 
-## Сетевые рекомендации
+## Проверка API с Windows
 
-- Зарезервируйте IP планшета в DHCP.
-- Home Assistant должен напрямую обращаться к `http://IP:2323`.
-- Если HA и планшет находятся в разных VLAN, разрешите нужный трафик между ними.
-- Не делайте port-forward `2323` на WAN.
+```powershell
+Invoke-RestMethod `
+  -Uri "http://192.168.1.118:2323/api/status" `
+  -Headers @{"X-HA-Kiosk-Key"="ВАШ_API_KEY"}
+```
+
+При рабочем соединении ответ содержит `ok = true` и состояние устройства.
+
+## Обновление APK
+
+Для обновления поверх существующей установки Android package не меняется: `com.hakiosk.app`.
+
+Через ADB:
+
+```cmd
+"%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" install -r "HA_Kiosk_Local.apk"
+```
+
+Также APK можно выбрать через сервисное меню HA Kiosk Local, если приложению разрешена установка из этого источника.
