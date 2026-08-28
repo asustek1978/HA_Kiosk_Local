@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect HA Kiosk",
+        "description": "Enter the tablet IP address, port and API key shown in HA Kiosk settings.",
+        "data": {
+          "host": "Tablet IP address",
+          "port": "API port",
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to HA Kiosk. Check the IP address, port and network.",
+      "invalid_auth": "Invalid API key."
+    },
+    "abort": {
+      "already_configured": "This HA Kiosk tablet is already configured."
+    }
+  }
+}

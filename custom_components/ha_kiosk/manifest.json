@@ -1,0 +1,13 @@
+{
+  "domain": "ha_kiosk",
+  "name": "HA Kiosk",
+  "codeowners": [
+    "@asustek1978"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/asustek1978/HA_Kiosk",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": [],
+  "version": "0.3.1.3"
+}
