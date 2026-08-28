@@ -1,4 +1,4 @@
-"""Buttons for HA Kiosk."""
+"""Buttons for HA Kiosk Local."""
 from __future__ import annotations
 from dataclasses import dataclass
 from homeassistant.components.button import ButtonEntity
@@ -19,7 +19,7 @@ class D:
 BUTTONS = (
     D(key="reload", name="Перезагрузить страницу", command="reload", icon="mdi:reload"),
     D(key="home", name="Открыть домашнюю страницу", command="home", icon="mdi:home"),
-    D(key="restart", name="Перезапустить HA Kiosk", command="restart", icon="mdi:restart"),
+    D(key="restart", name="Перезапустить HA Kiosk Local", command="restart", icon="mdi:restart"),
     D(key="reboot_device", name="Перезагрузить планшет / телефон", command="reboot_device", icon="mdi:restart-alert"),
 )
 
