@@ -1,4 +1,4 @@
-"""Text entity for opening a URL in HA Kiosk."""
+"""Text entity for opening a URL in HA Kiosk Local."""
 
 from __future__ import annotations
 
