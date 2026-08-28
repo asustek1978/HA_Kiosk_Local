@@ -1,4 +1,4 @@
-"""Binary sensors for HA Kiosk."""
+"""Binary sensors for HA Kiosk Local."""
 from __future__ import annotations
 from dataclasses import dataclass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
@@ -19,7 +19,7 @@ class D:
 BINARY_SENSORS = (
     D(key="charging", name="Зарядка", icon="mdi:battery-charging", device_class=BinarySensorDeviceClass.BATTERY_CHARGING),
     D(key="screen_on", name="Экран включён", icon="mdi:monitor"),
-    D(key="kiosk_home", name="HA Kiosk — главный экран", icon="mdi:home-lock"),
+    D(key="kiosk_home", name="HA Kiosk Local — главный экран", icon="mdi:home-lock"),
     D(key="device_admin", name="Управление экраном разрешено", icon="mdi:shield-lock"),
     D(key="device_owner", name="Device Owner", icon="mdi:shield-crown"),
     D(key="camera_permission", name="Разрешение камеры", icon="mdi:camera-lock-open"),
