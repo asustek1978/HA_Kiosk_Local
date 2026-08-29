@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '.release-trigger-v0.3.2-packagefix'
+      - '.release-trigger-v0.3.2-syncpackage'
 
 permissions:
   contents: write
@@ -28,6 +28,18 @@ jobs:
           zip -r ../HA_Kiosk_Local_Home_Assistant_v0.3.2.zip .
           cd ..
           ls -lh HA_Kiosk_Local_Home_Assistant_v0.3.2.zip
+
+      - name: Keep downloadable package in repository
+        run: |
+          mkdir -p downloads
+          cp HA_Kiosk_Local_Home_Assistant_v0.3.2.zip downloads/HA_Kiosk_Local_Home_Assistant_v0.3.2.zip
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/HA_Kiosk_Local_Home_Assistant_v0.3.2.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "Refresh HA Kiosk Local v0.3.2 integration package"
+            git push
+          fi
 
       - name: Create or update GitHub Release v0.3.2
         env:
