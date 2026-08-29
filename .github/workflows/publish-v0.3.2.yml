@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '.release-trigger-v0.3.2'
+      - '.release-trigger-v0.3.2-final'
 
 permissions:
   contents: write
@@ -17,16 +17,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create GitHub Release v0.3.2
+      - name: Create or update GitHub Release v0.3.2
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v0.3.2 \
-            downloads/HA_Kiosk_Local_Home_Assistant_v0.3.2.zip \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$GITHUB_SHA" \
-            --title "HA Kiosk Local v0.3.2" \
-            --notes "$(cat <<'EOF'
+          ASSET="downloads/HA_Kiosk_Local_Home_Assistant_v0.3.2.zip"
+          if gh release view v0.3.2 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v0.3.2 "$ASSET" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create v0.3.2 "$ASSET" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "HA Kiosk Local v0.3.2" \
+              --notes "$(cat <<'EOF'
           ## HA Kiosk Local v0.3.2
 
           Первый релиз проекта под новым публичным названием **HA Kiosk Local**.
@@ -50,7 +53,7 @@ jobs:
           Для ручной установки скачайте `HA_Kiosk_Local_Home_Assistant_v0.3.2.zip`.
 
           ### Android
-          Готовый Android APK должен называться `HA_Kiosk_Local.apk`.
+          Готовый Android APK называется `HA_Kiosk_Local.apk`.
           Для обновления поверх существующей установки APK должен быть подписан тем же ключом, что и установленная версия.
 
           Внутренние идентификаторы сохранены для совместимости:
@@ -58,3 +61,4 @@ jobs:
           - Home Assistant: `ha_kiosk`
           EOF
           )"
+          fi
