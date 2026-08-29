@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '.release-trigger-v0.3.2-final'
+      - '.release-trigger-v0.3.2-packagefix'
 
 permissions:
   contents: write
@@ -17,11 +17,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build Home Assistant integration package
+        run: |
+          rm -rf release_package HA_Kiosk_Local_Home_Assistant_v0.3.2.zip
+          mkdir -p release_package/custom_components
+          cp hacs.json release_package/
+          cp README.md release_package/
+          cp -a custom_components/ha_kiosk release_package/custom_components/
+          cd release_package
+          zip -r ../HA_Kiosk_Local_Home_Assistant_v0.3.2.zip .
+          cd ..
+          ls -lh HA_Kiosk_Local_Home_Assistant_v0.3.2.zip
+
       - name: Create or update GitHub Release v0.3.2
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          ASSET="downloads/HA_Kiosk_Local_Home_Assistant_v0.3.2.zip"
+          ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.2.zip"
           if gh release view v0.3.2 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload v0.3.2 "$ASSET" --clobber --repo "$GITHUB_REPOSITORY"
           else
