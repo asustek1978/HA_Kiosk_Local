@@ -1,11 +1,7 @@
 name: Publish HA Kiosk Local v0.3.2
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.release-trigger-v0.3.2-syncpackage'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -53,36 +49,5 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
               --title "HA Kiosk Local v0.3.2" \
-              --notes "$(cat <<'EOF'
-          ## HA Kiosk Local v0.3.2
-
-          Первый релиз проекта под новым публичным названием **HA Kiosk Local**.
-
-          ### В релизе
-          - Home Assistant integration v0.3.2
-          - локальный HTTP API с API key
-          - WebRTC camera + microphone
-          - motion / sound wake
-          - выключение и пробуждение экрана по освещённости
-          - fallback освещённости через камеру при отсутствии lux-сенсора
-          - исправление CAMERA_IN_USE
-          - battery / CPU / RAM / swap-zRAM telemetry
-          - Device Admin / Device Owner support
-          - reboot Android из Home Assistant при Device Owner
-
-          ### Home Assistant
-          Для HACS используйте custom repository:
-          `https://github.com/asustek1978/HA_Kiosk_Local`
-
-          Для ручной установки скачайте `HA_Kiosk_Local_Home_Assistant_v0.3.2.zip`.
-
-          ### Android
-          Готовый Android APK называется `HA_Kiosk_Local.apk`.
-          Для обновления поверх существующей установки APK должен быть подписан тем же ключом, что и установленная версия.
-
-          Внутренние идентификаторы сохранены для совместимости:
-          - Android: `com.hakiosk.app`
-          - Home Assistant: `ha_kiosk`
-          EOF
-          )"
+              --notes "HA Kiosk Local v0.3.2 — Android kiosk application and local Home Assistant integration."
           fi
