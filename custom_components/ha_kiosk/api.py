@@ -78,10 +78,17 @@ class HAKioskApi:
         except (TimeoutError, ClientError, ClientResponseError, ValueError) as err:
             raise HAKioskConnectionError(str(err)) from err
 
-    async def async_webrtc_offer(self, session_id: str, sdp: str) -> str:
-        payload = {"session_id": session_id, "sdp": sdp}
+    async def async_webrtc_offer(
+        self,
+        session_id: str,
+        sdp: str,
+        ice_servers: list[dict[str, Any]] | None = None,
+    ) -> str:
+        payload: dict[str, Any] = {"session_id": session_id, "sdp": sdp}
+        if ice_servers:
+            payload["ice_servers"] = ice_servers
         try:
-            async with asyncio.timeout(18):
+            async with asyncio.timeout(30):
                 async with self._session.post(
                     f"{self.base_url}/api/webrtc/offer",
                     headers=self.headers,
