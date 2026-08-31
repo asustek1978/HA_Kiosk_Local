@@ -18,8 +18,8 @@ jobs:
 
       - name: Build Home Assistant integration package
         run: |
-          set -e
-          ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.4.1.4.zip"
+          set -euo pipefail
+          ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.4.1.5.zip"
           rm -rf release_package "$ASSET"
           mkdir -p release_package/custom_components
           cp hacs.json release_package/
@@ -32,40 +32,53 @@ jobs:
 
       - name: Keep integration ZIP in repository
         run: |
-          set -e
-          ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.4.1.4.zip"
+          set -euo pipefail
+          ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.4.1.5.zip"
           mkdir -p downloads
           cp "$ASSET" "downloads/$ASSET"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "downloads/$ASSET"
           if ! git diff --cached --quiet; then
-            git commit -m "Refresh HA Kiosk Local integration v0.3.4.1.4 package"
+            git commit -m "Refresh HA Kiosk Local integration v0.3.4.1.5 package"
             git push
           fi
+
+      - name: Move release tag to current source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v0.3.4.1.4" -f sha="$GITHUB_SHA" -F force=true >/dev/null || true
 
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -e
+          set -euo pipefail
           TAG="v0.3.4.1.4"
-          HA_ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.4.1.4.zip"
+          HA_ASSET="HA_Kiosk_Local_Home_Assistant_v0.3.4.1.5.zip"
           NOTES=$(cat <<'EOF'
-          HA Kiosk Local current tested pair:
+          HA Kiosk Local current pair:
 
-          - Android: v0.3.4.1.2
-          - Home Assistant integration: v0.3.4.1.4
+          - Android source: v0.3.4.1.4 (versionCode 21)
+          - Home Assistant integration: v0.3.4.1.5
 
-          Primary tablet camera uses Home Assistant-proxied MJPEG for local and remote viewing. RTSP and Direct WebRTC remain optional secondary camera entities.
+          Android v0.3.4.1.4:
+          - separate numeric illuminance thresholds: screen off <= 0.5 lx, screen on >= 2.0 lx;
+          - hysteresis keeps an already-on screen on at 1.5 lx;
+          - fixes the false "port 2323 unavailable" toast on screen wake;
+          - retries the local API bind silently up to 5 times.
 
-          The Android APK must be the locally signed v0.3.4.1.2 build (package com.hakiosk.app) so it can update existing installations signed with the same key.
+          Home Assistant v0.3.4.1.5 exposes the two illuminance thresholds as number-box entities with 0.1 lx step.
+
+          Important: no newly signed Android APK is published by GitHub Actions, because a different signing key would not update existing tablets. Install a v0.3.4.1.4 APK signed with the same key as the currently installed app.
           EOF
           )
 
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload "$TAG" "$HA_ASSET" --clobber --repo "$GITHUB_REPOSITORY"
-            gh release edit "$TAG" --notes "$NOTES" --repo "$GITHUB_REPOSITORY"
+            gh release edit "$TAG" --title "HA Kiosk Local v0.3.4.1.4" --notes "$NOTES" --repo "$GITHUB_REPOSITORY"
           else
             gh release create "$TAG" "$HA_ASSET" \
               --repo "$GITHUB_REPOSITORY" \
@@ -74,8 +87,7 @@ jobs:
               --notes "$NOTES"
           fi
 
-          # If the correctly signed Android APK has been placed in downloads,
-          # include it automatically without rebuilding/re-signing it in Actions.
-          if [ -f downloads/HA_Kiosk_Local.apk ]; then
-            gh release upload "$TAG" downloads/HA_Kiosk_Local.apk --clobber --repo "$GITHUB_REPOSITORY"
-          fi
+          # Never leave an older Android APK attached to this updated release.
+          # A replacement may be uploaded only after it is signed with the same
+          # key used by the installed tablets.
+          gh release delete-asset "$TAG" HA_Kiosk_Local.apk --yes --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
