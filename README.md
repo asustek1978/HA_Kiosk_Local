@@ -4,10 +4,10 @@
 
 > Проект работает локально: без облака и без MQTT. Home Assistant подключается к API планшета напрямую по локальной сети.
 
-## Текущая версия
+## Текущая рабочая версия
 
-- Android-приложение: **v0.3.2**
-- Home Assistant integration: **v0.3.2**
+- Android-приложение: **v0.3.4.1.2**
+- Home Assistant integration: **v0.3.4.1.4**
 - Android: **10+ (API 29+)**
 - target / compile SDK: **34 (Android 14)**
 - Home Assistant: **2026.8+**
@@ -28,18 +28,46 @@
 - установка APK из сервисного меню;
 - Reload свайпом от левого/правого края.
 
+### Камера
+
+Основная камера Home Assistant в **v0.3.4.1.4** использует HA-proxied MJPEG по схеме:
+
+```text
+Android tablet /api/camera/mjpeg (LAN only)
+        ↓
+Home Assistant integration
+        ↓
+/api/camera_proxy_stream
+        ↓
+локальный или удалённый клиент Home Assistant
+```
+
+Преимущества:
+
+- браузеру/телефону не нужен прямой доступ к IP планшета;
+- порт планшета `2323` не нужно открывать в Интернет;
+- удалённый просмотр идёт через обычный внешний URL Home Assistant;
+- повторное открытие камеры после простоя не требует перезапуска HA Kiosk Local;
+- фронтальная камера передаёт изображение без зеркального отображения.
+
+Дополнительно интеграция создаёт отключённые по умолчанию экспериментальные сущности:
+
+- **Камера планшета — RTSP** — H.264/AAC, порт `8554`, только LAN;
+- **Камера планшета — Direct WebRTC** — прямой low-latency fallback для локальной сети.
+
+RTSP и Direct WebRTC не нужны для обычного удалённого просмотра основной камеры.
+
 ### Камера, движение, звук
 
-- WebRTC-камера планшета в Home Assistant;
-- видео + звук с микрофона;
 - передняя/задняя камера;
 - 480p / 720p / 1080p;
 - 15 / 20 / 24 / 30 FPS;
+- звук с микрофона для RTSP/WebRTC режимов;
 - детектор движения;
 - детектор уровня звука;
 - включение экрана по движению и/или звуку;
 - автовыключение экрана при отсутствии активности;
-- защита от конфликта `CAMERA_IN_USE` между WebRTC и монитором движения/освещённости.
+- защита от конфликта камеры между видеопотоком и монитором движения/освещённости.
 
 ### Освещённость
 
@@ -62,17 +90,12 @@
 - IP, Wi-Fi RSSI, Android version, версия приложения, uptime;
 - CPU load и температура CPU при доступности;
 - RAM, память процесса, swap/zRAM, virtual memory;
-- состояние экрана, WebRTC, движения, звука и освещённости.
+- состояние экрана, камеры, RTSP/WebRTC, движения, звука и освещённости;
+- RTSP clients, bitrate, port и последняя ошибка камеры.
 
 ## Установка Android
 
-Готовый APK для текущей версии называется:
-
-```text
-HA_Kiosk_Local.apk
-```
-
-Для установки через ADB:
+Для обновления через ADB:
 
 ```cmd
 "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" install -r "HA_Kiosk_Local.apk"
@@ -87,7 +110,7 @@ HA_Kiosk_Local.apk
 3. Включите локальный API HA Kiosk Local.
 4. Запишите IP планшета, порт (по умолчанию `2323`) и API key.
 5. При необходимости выберите **HA Kiosk Local** как Home / Launcher.
-6. Разрешите камеру и микрофон, если нужны WebRTC, движение или звук.
+6. Разрешите камеру и микрофон, если нужны камера, движение или звук.
 
 ## Установка интеграции Home Assistant
 
@@ -122,12 +145,6 @@ custom_components/ha_kiosk/
 
 и полностью перезапустите Home Assistant.
 
-Также подготовлен готовый архив интеграции:
-
-```text
-downloads/HA_Kiosk_Local_Home_Assistant_v0.3.2.zip
-```
-
 ## Device Admin и Device Owner
 
 Это разные уровни прав.
@@ -157,9 +174,11 @@ Not allowed to set the device owner because there are already some accounts on t
 |---|---|
 | `device unauthorized` | Разблокировать Android и подтвердить RSA-доступ USB debugging |
 | `unknown command` | Обновить Android-приложение и HA integration до совместимых версий |
-| `CAMERA_IN_USE (4)` | Камера занята другим клиентом; v0.3.1.2+ освобождает камеру между WebRTC и motion/light monitor |
+| Основная камера не открывается | Проверить LAN-доступ HA → планшет и `/api/camera/mjpeg` |
+| RTSP завис после простоя | Использовать актуальную интеграцию; RTSP entity выполняет stop → start перед новым подключением |
+| `CAMERA_IN_USE (4)` | Камера занята другим клиентом или монитором; закрыть стороннее приложение и дать HA Kiosk Local несколько секунд на восстановление |
 | Нет lux | Устройство может не иметь физического датчика; выбрать `Авто: lux → камера` |
-| После темноты экран не включается | Использовать актуальную версию с wake по свету и фоновой блокировкой CPU |
+| После темноты экран не включается | Проверить источник света, пороги и разрешение камеры |
 | Reboot не работает | Проверить, что HA Kiosk Local является Device Owner |
 | Интеграция недоступна | Проверить IP, порт 2323, API key, firewall/VLAN и доступ HA → Android |
 | Батарейный сенсор `unknown` | Не все устройства отдают CURRENT_NOW, CURRENT_AVERAGE, charge/energy counter |
@@ -172,9 +191,11 @@ Not allowed to set the device owner because there are already some accounts on t
 Рекомендуется:
 
 - использовать только доверенную LAN/VLAN;
-- не пробрасывать порт `2323` в Интернет;
+- не пробрасывать порты планшета `2323` и `8554` в Интернет;
 - закрепить IP устройства через DHCP reservation;
 - не публиковать API key в issue, логах и скриншотах.
+
+Основная удалённая камера работает через Home Assistant, поэтому прямой внешний доступ к планшету для неё не требуется.
 
 ## Совместимость при переименовании
 
@@ -183,6 +204,7 @@ Not allowed to set the device owner because there are already some accounts on t
 ```text
 Android applicationId: com.hakiosk.app
 Home Assistant domain: ha_kiosk
+HTTP header: X-HA-Kiosk-Key
 ```
 
 Поэтому обновление не должно создавать второе Android-приложение или новую копию интеграции Home Assistant.
