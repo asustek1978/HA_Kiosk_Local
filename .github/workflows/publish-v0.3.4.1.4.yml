@@ -2,6 +2,9 @@ name: Publish HA Kiosk Local v0.3.4.1.4
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.release/v0.3.4.1.4'
 
 permissions:
   contents: write
