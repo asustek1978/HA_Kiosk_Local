@@ -1,0 +1,43 @@
+name: Import Android source bundle
+
+on:
+  push:
+    paths:
+      - '.source/android-source-v0.3.4.1.2.zip.b64'
+
+permissions:
+  contents: write
+
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Decode Android source bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/ha-kiosk-android /tmp/ha-kiosk-android.zip android
+          mkdir -p /tmp/ha-kiosk-android android
+          base64 -d .source/android-source-v0.3.4.1.2.zip.b64 > /tmp/ha-kiosk-android.zip
+          unzip -q /tmp/ha-kiosk-android.zip -d /tmp/ha-kiosk-android
+          SRC_DIR="$(find /tmp/ha-kiosk-android -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+          cp -a "$SRC_DIR"/. android/
+          rm -rf android/home_assistant
+          rm -f android/CHANGELOG_v0.3.3.md android/CHANGELOG_v0.3.4.md android/CHANGELOG_v0.3.4.1.md android/CHANGELOG_v0.3.4.1.1.md
+          mv android/CHANGELOG_v0.3.4.1.2.md android/CHANGELOG.md
+          rm -f .source/android-source-v0.3.4.1.2.zip.b64
+
+      - name: Commit Android source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A android .source || true
+          if ! git diff --cached --quiet; then
+            git commit -m "Add Android v0.3.4.1.2 source"
+            git push
+          fi
