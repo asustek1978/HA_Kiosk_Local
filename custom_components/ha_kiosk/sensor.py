@@ -68,6 +68,13 @@ SENSORS = (
 
     HAKioskSensorDescription(key="camera_facing", name="Выбранная камера", icon="mdi:camera-switch"),
     HAKioskSensorDescription(key="webrtc_sessions", name="WebRTC подключения", icon="mdi:video-wireless-outline", state_class=M),
+    HAKioskSensorDescription(key="webrtc_ice_server_count", name="WebRTC ICE-серверы", icon="mdi:server-network", state_class=M),
+    HAKioskSensorDescription(key="webrtc_ice_server_types", name="WebRTC ICE-режим", icon="mdi:lan-connect"),
+    HAKioskSensorDescription(key="camera_transport", name="Транспорт камеры", icon="mdi:lan-connect"),
+    HAKioskSensorDescription(key="camera_rtsp_clients", name="RTSP подключения", icon="mdi:lan-pending", state_class=M),
+    HAKioskSensorDescription(key="camera_rtsp_port", name="RTSP порт", icon="mdi:ethernet"),
+    HAKioskSensorDescription(key="camera_rtsp_bitrate_kbps", name="RTSP битрейт", icon="mdi:speedometer", unit="kbps", state_class=M),
+    HAKioskSensorDescription(key="camera_rtsp_last_client_seconds_ago", name="Последнее RTSP подключение", icon="mdi:timer-outline", unit=UnitOfTime.SECONDS, device_class=SensorDeviceClass.DURATION, state_class=M, precision=1),
     HAKioskSensorDescription(key="camera_last_error", name="Последняя ошибка камеры", icon="mdi:alert-circle-outline"),
     HAKioskSensorDescription(key="motion_score", name="Уровень движения", icon="mdi:motion-sensor", unit=PERCENTAGE, state_class=M, precision=1),
     HAKioskSensorDescription(key="sound_level_db", name="Уровень звука", icon="mdi:waveform", unit="dB", state_class=M, precision=1),
